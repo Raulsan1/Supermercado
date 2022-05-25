@@ -6,14 +6,26 @@ public class TrabajadorDTO {
 	private String usuario;
 	private String contraseña;
 	private String nombre;
+	private String dni;
 	
 
-	public TrabajadorDTO (Integer codEmpleado, String usuario,  String contraseña, String nombre) {
+	public TrabajadorDTO (Integer codEmpleado, String usuario,  String contraseña, String nombre, String dni) {
 		
 		this.codEmpleado = codEmpleado;
 		this.usuario = usuario;
 		this.contraseña = contraseña;
 		this.nombre = nombre;
+		this.dni = dni;
+	}
+
+
+	public String getDni() {
+		return dni;
+	}
+
+
+	public void setDni(String dni) {
+		this.dni = dni;
 	}
 
 

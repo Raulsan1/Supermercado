@@ -10,6 +10,9 @@ public class MarcoLogin extends JFrame{
 		
 		Toolkit pantalla = Toolkit.getDefaultToolkit();
 		
+		PanelUsuario iconoUsuario = new PanelUsuario();
+		add(iconoUsuario);
+		
 		setTitle("Login");
 		
 		Image icono = pantalla.getImage("src/interfazGrafica/supergali.jpg");
@@ -28,5 +31,6 @@ public class MarcoLogin extends JFrame{
 		
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 	}
 }

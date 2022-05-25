@@ -8,15 +8,14 @@ public class FacturaDTO {
 	private Integer caja;
 	private Integer fecha;
 	private Integer hora;
-	private ArrayList<ProductoDTO> productos;
 	
-	public FacturaDTO (Integer codFactura, Integer caja, Integer fecha, Integer hora, ArrayList<ProductoDTO> productos) {
+	
+	public FacturaDTO (Integer codFactura, Integer caja, Integer fecha, Integer hora) {
 		
 		this.codFactura = codFactura;
 		this.caja = caja;
 		this.fecha = fecha;
 		this.hora = hora;
-		this.productos = productos;
 	}
 
 	public Integer getCodFactura() {
@@ -49,13 +48,5 @@ public class FacturaDTO {
 
 	public void setHora(Integer hora) {
 		this.hora = hora;
-	}
-
-	public ArrayList<ProductoDTO> getProductos() {
-		return productos;
-	}
-
-	public void setProductos(ArrayList<ProductoDTO> productos) {
-		this.productos = productos;
 	}
 }
