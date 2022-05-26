@@ -1,21 +1,20 @@
 package supermercadoModelo;
 
-import java.util.ArrayList;
+import java.sql.Timestamp;
 
 public class FacturaDTO {
 
 	private Integer codFactura;
 	private Integer caja;
-	private Integer fecha;
-	private Integer hora;
+	private Timestamp fechaHora;
 	
 	
-	public FacturaDTO (Integer codFactura, Integer caja, Integer fecha, Integer hora) {
+	public FacturaDTO (Integer codFactura, Integer caja, Timestamp fechaHora) {
 		
 		this.codFactura = codFactura;
 		this.caja = caja;
-		this.fecha = fecha;
-		this.hora = hora;
+		this.fechaHora = fechaHora;
+
 	}
 
 	public Integer getCodFactura() {
@@ -34,19 +33,13 @@ public class FacturaDTO {
 		this.caja = caja;
 	}
 
-	public Integer getFecha() {
-		return fecha;
+	public Timestamp getFechaHora() {
+		return fechaHora;
 	}
 
-	public void setFecha(Integer fecha) {
-		this.fecha = fecha;
+	public void setFechaHora(Timestamp fechaHora) {
+		this.fechaHora = fechaHora;
 	}
-
-	public Integer getHora() {
-		return hora;
-	}
-
-	public void setHora(Integer hora) {
-		this.hora = hora;
-	}
+	
 }
+

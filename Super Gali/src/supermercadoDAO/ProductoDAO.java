@@ -3,13 +3,14 @@ package supermercadoDAO;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import juego.Conectar;
 import supermercadoModelo.ProductoDTO;
 
 public class ProductoDAO {
 
 
-	public void buscarProducto (ProductoDTO dto) {
+	public ProductoDTO buscarProducto (ProductoDTO dto) {
+		
+		ProductoDTO producto = null;
 		
 		try {
 			
@@ -18,13 +19,20 @@ public class ProductoDAO {
 			
 			if (!dto.getCodProducto().equals("")) {
 				
-				ResultSet resultado = consulta.executeQuery("SELECT * FROM Personaje WHERE nombre = '"+dto.getCodProducto()+"';");
+				ResultSet resultado = consulta.executeQuery("SELECT * FROM Productos WHERE CodigoProducto = '"+dto.getCodProducto()+"';");
 				
 				if (resultado.next()==true) {
-					System.out.println("El personaje se encuentra en la base de datos.");
+					System.out.println("El producto se encuentra en la base de datos.");
+					
+					Integer codigoProducto = resultado.getInt(1);
+					String nombre = resultado.getString(2);
+					Double precio = resultado.getDouble(3);
+					Double precioIva = resultado.getDouble(4);					
+				
+					producto = new ProductoDTO(codigoProducto,nombre,precio,precioIva);
 					
 				}else {
-					System.out.println("El personaje no se encuentra en la base de datos.");
+					System.out.println("El producto no se encuentra en la base de datos.");
 				}
 				
 				resultado.close();
@@ -36,6 +44,8 @@ public class ProductoDAO {
 		} catch (Exception e) {
 			System.out.println("Error en la consulta: "+e.getLocalizedMessage());
 		}
+		
+		return producto;
 	}
 	
 }

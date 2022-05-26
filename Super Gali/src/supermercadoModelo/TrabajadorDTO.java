@@ -7,15 +7,17 @@ public class TrabajadorDTO {
 	private String contraseña;
 	private String nombre;
 	private String dni;
+	private Integer caja;
 	
 
-	public TrabajadorDTO (Integer codEmpleado, String usuario,  String contraseña, String nombre, String dni) {
+	public TrabajadorDTO (Integer codEmpleado, String usuario,  String contraseña,Integer caja, String nombre, String dni) {
 		
 		this.codEmpleado = codEmpleado;
 		this.usuario = usuario;
 		this.contraseña = contraseña;
 		this.nombre = nombre;
 		this.dni = dni;
+		this.caja = caja;
 	}
 
 
@@ -66,5 +68,15 @@ public class TrabajadorDTO {
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
+	}
+
+
+	public Integer getCaja() {
+		return caja;
+	}
+
+
+	public void setCaja(Integer caja) {
+		this.caja = caja;
 	}
 }
