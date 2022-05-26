@@ -14,34 +14,26 @@ public class MarcoLogin extends JFrame{
 	public MarcoLogin () {
 		
 		Toolkit pantalla = Toolkit.getDefaultToolkit();
-		
-		border = new BorderLayout(3,3);
-		
-		setLayout(border);
-		
-		usuario = new JLabel("Usuario");		
-
-		/*
-		PanelUsuario iconoUsuario = new PanelUsuario();
-		add(iconoUsuario);
-		iconoUsuario.repaint();
-		iconoUsuario.setSize(100,100);
-		*/
-		setTitle("Login");
-		
 		Image icono = pantalla.getImage("src/imagenes/supergali.jpg");
+		
+		border = new BorderLayout(3,3);	
+
+		Fondo fondo = new Fondo();
+		add(fondo);
+		
+		setTitle("Login");
 		
 		setIconImage(icono);
 		
 		Dimension tamanoPantalla = pantalla.getScreenSize();
 		
-		Double alturaPantalla = (double) tamanoPantalla.height;
+		int alturaPantalla = tamanoPantalla.height;
 		
-		Double anchoPantalla = (double) tamanoPantalla.width;
+		int anchoPantalla = tamanoPantalla.width;
 		
-		setSize((int)(anchoPantalla/2),(int)(alturaPantalla/1.5));
+		setSize(anchoPantalla/3,alturaPantalla/3);
 		
-		setLocation((int)(anchoPantalla/4.25),(int) (alturaPantalla/5.5));
+		setLocation(anchoPantalla/4, alturaPantalla/4);
 		
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
