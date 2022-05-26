@@ -7,7 +7,9 @@ import supermercadoModelo.TrabajadorDTO;
 
 public class TrabajadorDAO {
 
-	public void buscarTrabajador (TrabajadorDTO dto) {
+	public TrabajadorDTO buscarTrabajador (TrabajadorDTO dto) {
+		
+		TrabajadorDTO trabajador = null;
 		
 		try {
 			
@@ -28,7 +30,7 @@ public class TrabajadorDAO {
 					String nombre = resultado.getString(5);
 					String dni = resultado.getString(6);
 					
-					TrabajadorDTO t = new TrabajadorDTO(codigoEmpleado,usuario,contrasena,caja,nombre,dni);
+					trabajador = new TrabajadorDTO(codigoEmpleado,usuario,contrasena,caja,nombre,dni);
 					
 				}else {
 					System.out.println("El personaje no se encuentra en la base de datos.");
@@ -43,5 +45,7 @@ public class TrabajadorDAO {
 		} catch (Exception e) {
 			System.out.println("Error en la consulta: "+e.getLocalizedMessage());
 		}
+		
+		return trabajador;
 	}
 }

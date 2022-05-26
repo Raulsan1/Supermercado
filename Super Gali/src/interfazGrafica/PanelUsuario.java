@@ -13,7 +13,7 @@ public class PanelUsuario extends JPanel{
 
 		Graphics2D g2 = (Graphics2D)g;
 		
-		imagen = new ImageIcon(getClass().getResource("/iconoUsuario.jpg"));
+		imagen = new ImageIcon(getClass().getResource("src/imagenes/iconoUsuario.jpg"));
 		g2.drawImage(imagen.getImage(), 0, 0, getWidth(), getHeight(),null);
 		
 		setOpaque(false);

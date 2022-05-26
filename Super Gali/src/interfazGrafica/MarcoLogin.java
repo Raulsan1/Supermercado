@@ -29,7 +29,7 @@ public class MarcoLogin extends JFrame{
 		*/
 		setTitle("Login");
 		
-		Image icono = pantalla.getImage("/supergali.jpg");
+		Image icono = pantalla.getImage("src/imagenes/supergali.jpg");
 		
 		setIconImage(icono);
 		
