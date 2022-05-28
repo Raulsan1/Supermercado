@@ -2,27 +2,20 @@ package interfazGrafica;
 
 import javax.swing.*;
 import java.awt.*;
-import supermercadoModelo.TrabajadorDTO;
 
 public class MarcoLogin extends JFrame{
-	
-	BorderLayout border;
-	JLabel usuario,contrasena;
-	JTextField usuarioText,contrasenaText;
-	JButton aceptar,Borrar;
 
 	public MarcoLogin () {
 		
 		Toolkit pantalla = Toolkit.getDefaultToolkit();
 		Image icono = pantalla.getImage("src/imagenes/supergali.jpg");
 		
-		border = new BorderLayout(3,3);	
-
-		Fondo fondo = new Fondo();
+		PanelFondo fondo = new PanelFondo();
+		PanelBorderLayout borderLayout = new PanelBorderLayout();
+		add(borderLayout);
 		add(fondo);
 		
 		setTitle("Login");
-		
 		setIconImage(icono);
 		
 		Dimension tamanoPantalla = pantalla.getScreenSize();

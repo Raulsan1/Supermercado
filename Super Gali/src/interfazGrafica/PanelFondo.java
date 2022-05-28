@@ -4,7 +4,7 @@ import java.awt.*;
 
 import javax.swing.*;
 
-public class Fondo extends JPanel{
+public class PanelFondo extends JPanel{
 
 	private ImageIcon imagen;
 	

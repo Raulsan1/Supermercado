@@ -10,13 +10,12 @@ public class Principal {
 		
 		MarcoLogin login = new MarcoLogin();
 		
-		encriptarContrasena();
+		encriptarContrasena("raul");
+		encriptarContrasena("1234");
 	}
 
 	
-	public static void encriptarContrasena () {
-		
-		String texto ="raul";
+	public static void encriptarContrasena (String texto) {
 		
 		try {
 			  
