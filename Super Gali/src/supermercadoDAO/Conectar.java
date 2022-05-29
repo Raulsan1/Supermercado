@@ -22,7 +22,7 @@ public class Conectar {
 			Class.forName(driver);
 			
 			//Configuramos la conexion con la BBDD
-			connect = DriverManager.getConnection("jdbc:mysql://"+ host +"/Juego?"+ "user="+ user + "&password= "+ passwd);
+			connect = DriverManager.getConnection("jdbc:mysql://"+ host +"/Supermercado?"+ "user="+ user + "&password="+ passwd);
 			
 			//El Statement permite realizar consutlas SQL a la base de datos.
 			statement = connect.createStatement();

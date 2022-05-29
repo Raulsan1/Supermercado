@@ -18,7 +18,7 @@ public class TrabajadorDAO {
 			
 			if (!dto.getCodEmpleado().equals("")) {
 				
-				ResultSet resultado = consulta.executeQuery("SELECT * FROM Trabajadores WHERE CodigoEmpleado = '"+dto.getCodEmpleado()+"';");
+				ResultSet resultado = consulta.executeQuery("SELECT * FROM Trabajadores WHERE Usuario = '"+dto.getCodEmpleado()+"';");
 				
 				if (resultado.next()==true) {
 					System.out.println("El personaje se encuentra en la base de datos.");
@@ -47,5 +47,41 @@ public class TrabajadorDAO {
 		}
 		
 		return trabajador;
+	}
+	
+	public boolean comprobarContrasenaUsuario (TrabajadorDTO dto) {
+		
+		boolean comp = false;
+		
+		try {
+			
+			Conectar con = new Conectar ();
+			Statement consulta = con.getConnect().createStatement();
+			
+			if (!dto.getUsuario().equals("")) {
+				
+				ResultSet resultado = consulta.executeQuery("SELECT * FROM Trabajadores WHERE Usuario = '"+dto.getUsuario()+"';");
+
+				if (resultado.next()==true) {
+					
+					if (resultado.getString(3).equalsIgnoreCase(dto.getUsuario())&&resultado.getString(4).equalsIgnoreCase(dto.getContraseña())) {
+						
+						comp = true;
+					}else {
+						comp = false;
+					}
+				} 
+				
+				resultado.close();
+			}
+			consulta.close();
+			con.cerrarConexion(con.getConnect());
+	
+			
+		} catch (Exception e) {
+			System.out.println("Error en la consulta: "+e.getLocalizedMessage());
+		}
+		
+		return comp;
 	}
 }
