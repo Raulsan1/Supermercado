@@ -17,7 +17,6 @@ public class PanelBorderLayout extends JPanel implements ActionListener{
 	private JButton aceptar;
 	private JTextField textoUsu;
 	private JPasswordField textoCont;
-	private JLabel aviso;
 	
 	public PanelBorderLayout () {
 		
@@ -46,12 +45,10 @@ public class PanelBorderLayout extends JPanel implements ActionListener{
 		JPanel sur = new JPanel();
 		borrar = new JButton ("Borrar");
 		aceptar = new JButton ("Aceptar");
-		aviso = new JLabel ("");
 		
 		sur.setLayout (new FlowLayout (FlowLayout.CENTER,150,10));
 		sur.add(borrar);
 		sur.add(aceptar);
-		sur.add(aviso);
 		sur.setPreferredSize (new Dimension (100,120));
 		
 		borrar.addActionListener(this);
@@ -63,7 +60,6 @@ public class PanelBorderLayout extends JPanel implements ActionListener{
 		
 		
 		setBounds(42,31,755,380);
-		
 	}
 
 	@Override
@@ -86,11 +82,15 @@ public class PanelBorderLayout extends JPanel implements ActionListener{
 			TrabajadorDAO t = new TrabajadorDAO();
 			
 			if (t.comprobarContrasenaUsuario(empleado)==true) {
-				aviso.setText("");
 				
 				if (usuario.equals("Administrador")) {
 					
 					MarcoAdministrador ad = new MarcoAdministrador();
+					
+					ad.setVisible(true);
+					
+					MarcoLogin login = new MarcoLogin();
+					login.setVisible(false);
 				} else {
 					
 					MarcoCaja caja = new MarcoCaja();
@@ -98,7 +98,7 @@ public class PanelBorderLayout extends JPanel implements ActionListener{
 				
 				
 			} else {
-				aviso.setText("Contraseña o usuario incorrectos");
+				JOptionPane.showMessageDialog(PanelBorderLayout.this, "Contraseña o usuario incorrecto","Advertencia",0);
 			}
 		}
 		

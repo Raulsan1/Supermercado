@@ -5,14 +5,27 @@ public class ProductoDTO {
 	private Integer codProducto;
 	private String nombreProd;
 	private Double precio;
-	private Double precioIva;
+	private Double tipoIva;
+	private Integer stock;
 
-	public ProductoDTO(Integer codProducto, String nombreProd, Double precio, Double precioIva) {
+	public ProductoDTO(Integer codProducto, String nombreProd, Double precio, Double tipoIva,Integer stock) {
 		
 		this.codProducto = codProducto;
 		this.nombreProd = nombreProd;
 		this.precio = precio;
-		this.setPrecioIva(precioIva);
+		this.tipoIva = tipoIva;
+		this.stock = stock;
+	}
+	
+	public ProductoDTO (String nombreProd, Double precio, Double tipoIva) {
+		
+		this.nombreProd = nombreProd;
+		this.precio = precio;
+		this.tipoIva = tipoIva;
+	}
+	
+	public ProductoDTO (Integer codProducto) {
+		this.codProducto = codProducto;
 	}
 
 	public Integer getCodProducto() {
@@ -39,11 +52,19 @@ public class ProductoDTO {
 		this.precio = precio;
 	}
 
-	public Double getPrecioIva() {
-		return precioIva;
+	public Integer getStock() {
+		return stock;
 	}
 
-	public void setPrecioIva(Double precioIva) {
-		this.precioIva = precioIva;
+	public void setStock(Integer stock) {
+		this.stock = stock;
+	}
+
+	public Double getTipoIva() {
+		return tipoIva;
+	}
+
+	public void setTipoIva(Double tipoIva) {
+		this.tipoIva = tipoIva;
 	}
 }

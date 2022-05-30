@@ -16,29 +16,25 @@ public class ProductoDAO {
 			
 			Conectar con = new Conectar ();
 			Statement consulta = con.getConnect().createStatement();
+				
+			ResultSet resultado = consulta.executeQuery("SELECT * FROM Productos WHERE CodigoProducto = '"+dto.getCodProducto()+"';");
 			
-			if (!dto.getCodProducto().equals("")) {
+			if (resultado.next()==true) {
 				
-				ResultSet resultado = consulta.executeQuery("SELECT * FROM Productos WHERE CodigoProducto = '"+dto.getCodProducto()+"';");
+				String nombre = resultado.getString(2);
+				Double precio = resultado.getDouble(3);
+				Double precioIva = resultado.getDouble(4);	
+			
+				producto = new ProductoDTO(nombre,precio,precioIva);
 				
-				if (resultado.next()==true) {
-					System.out.println("El producto se encuentra en la base de datos.");
-					
-					Integer codigoProducto = resultado.getInt(1);
-					String nombre = resultado.getString(2);
-					Double precio = resultado.getDouble(3);
-					Double precioIva = resultado.getDouble(4);					
-				
-					producto = new ProductoDTO(codigoProducto,nombre,precio,precioIva);
-					
-				}else {
-					System.out.println("El producto no se encuentra en la base de datos.");
-				}
-				
-				resultado.close();
+			}else {
+				System.out.println("El producto no se encuentra en la base de datos.");
 			}
-			consulta.close();
-			con.cerrarConexion(con.getConnect());
+			
+			resultado.close();
+		
+		consulta.close();
+		con.cerrarConexion(con.getConnect());
 	
 			
 		} catch (Exception e) {
