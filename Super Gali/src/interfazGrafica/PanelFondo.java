@@ -15,7 +15,6 @@ public class PanelFondo extends JPanel{
 		
 		imagen = new ImageIcon(getClass().getResource("/imagenes/fondo.png"));
 		g2.drawImage(imagen.getImage(), 0, 0, getWidth(), getHeight(),null);
-		
 		setOpaque(false);
 		
 		super.paint(g);

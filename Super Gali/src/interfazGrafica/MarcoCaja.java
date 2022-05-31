@@ -6,9 +6,12 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.TreeMap;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import supermercadoDAO.ProductoDAO;
@@ -22,6 +25,7 @@ public class MarcoCaja extends JFrame{
 	private JButton comprobar;
 	private JButton agregar;
 	private JButton generar;
+	private JButton eliminarTodo;
 	
 	private JTextField textoCodigo;
 	private JTextField textoNombre;
@@ -34,8 +38,9 @@ public class MarcoCaja extends JFrame{
 	private JPanel sur;
 	
 	private JTable datos;
+	private DefaultTableModel model;
 	private TreeMap <Integer,Integer> productos;
-	private HashSet <String> productosNombre;
+	private LinkedHashSet <String> productosNombre;
 	
 	private int contador;
 	private double preciostot;
@@ -48,7 +53,7 @@ public class MarcoCaja extends JFrame{
 		Toolkit pantalla = Toolkit.getDefaultToolkit();
 		Image icono = pantalla.getImage("src/imagenes/supergali.jpg");
 		productos = new TreeMap<Integer,Integer>();
-		productosNombre = new HashSet<String>();
+		productosNombre = new LinkedHashSet<String>();
 		setLayout(new BorderLayout());
 		
 		JLabel codigo = new JLabel("Codigo");
@@ -78,7 +83,8 @@ public class MarcoCaja extends JFrame{
 		add(oeste,BorderLayout.WEST);
 		
 		este = new JPanel();
-		datos = new JTable (new DefaultTableModel(columnas,0));
+		model = new DefaultTableModel (columnas,0);
+		datos = new JTable (model);
 		este.add(new JScrollPane(datos));
 		este.setPreferredSize(new Dimension (500,200));
 		add(este, BorderLayout.EAST);
@@ -88,6 +94,7 @@ public class MarcoCaja extends JFrame{
 		comprobar = new JButton ("Comprobar codigo");
 		agregar = new JButton ("Agregar producto");
 		generar = new JButton ("Generar factura");
+		eliminarTodo = new JButton ("Eliminar todo");
 		
 		sur = new JPanel();
 		sur.setLayout(new FlowLayout (FlowLayout.CENTER,25,25));
@@ -95,29 +102,46 @@ public class MarcoCaja extends JFrame{
 		sur.add(comprobar);
 		sur.add(agregar);
 		sur.add(eliminar);
+		sur.add(eliminarTodo);
 		sur.add(generar);
+		
 		add(sur,BorderLayout.SOUTH);
+		eliminarTodo.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				DefaultTableModel model = (DefaultTableModel) datos.getModel();
+
+				model.setRowCount(0);
+				productosNombre.clear();
+				productos.clear();
+			}
+			
+		});
 		
 		eliminar.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				int fila = 0;
+				int fila = datos.getSelectedRow();
+				int i = 0;
 				
-				DefaultTableModel model = (DefaultTableModel) datos.getModel();
-				
-				if (datos.getSelectedRow() != -1) {
-					for (int i=0;i<model.getRowCount();i++) {
-						if (model.getValueAt(i, 0).equals(textoNombre.getText())) {
-							fila = i;
-						}
-					}
-					System.out.println(fila);
-					productosNombre.remove(model.getValueAt(fila, 0));
-					model.removeRow(datos.getSelectedRow());	
+				for (String elemento: productosNombre) {
+					
+					if (i == fila)
+		            {
+		                productosNombre.remove(elemento);
+		                break;
+		            }
+		            i++;
 				}
+				model.removeRow(fila);
 				System.out.println(productosNombre);
+				
+				
+				   
 			}
 		});
 		
@@ -214,6 +238,7 @@ public class MarcoCaja extends JFrame{
 				
 			}
 		});
+		
 		
 		setTitle("Caja");
 		setIconImage(icono);

@@ -35,7 +35,7 @@ public class PanelBorderLayout extends JPanel implements ActionListener{
 		textoUsu = new JTextField(20);
 		textoCont = new JPasswordField(20);
 		
-		centro.setLayout(new FlowLayout(FlowLayout.RIGHT,150,20));
+		centro.setLayout(new FlowLayout(FlowLayout.RIGHT,200,20));
 		centro.add(new JLabel("Usuario"));
 		centro.add(textoUsu);
 		centro.add(new JLabel("Contraseña"));
@@ -58,8 +58,10 @@ public class PanelBorderLayout extends JPanel implements ActionListener{
 		add(centro,BorderLayout.CENTER);
 		add(sur,BorderLayout.SOUTH);
 		
-		
-		setBounds(42,31,700,350);
+		this.getSize();
+		// width=960,height=540
+		//960-850 = 110 //540-430 = 110
+		setBounds(47,35,850,430);
 	}
 
 	@Override
