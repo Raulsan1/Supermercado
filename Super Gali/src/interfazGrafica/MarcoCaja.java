@@ -103,16 +103,21 @@ public class MarcoCaja extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
+				int fila = 0;
+				
 				DefaultTableModel model = (DefaultTableModel) datos.getModel();
 				
 				if (datos.getSelectedRow() != -1) {
 					for (int i=0;i<model.getRowCount();i++) {
 						if (model.getValueAt(i, 0).equals(textoNombre.getText())) {
-							productosNombre.remove(model.getValueAt(i, 0));
+							fila = i;
 						}
 					}
+					System.out.println(fila);
+					productosNombre.remove(model.getValueAt(fila, 0));
 					model.removeRow(datos.getSelectedRow());	
 				}
+				System.out.println(productosNombre);
 			}
 		});
 		
