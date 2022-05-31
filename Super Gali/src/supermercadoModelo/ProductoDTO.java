@@ -17,11 +17,12 @@ public class ProductoDTO {
 		this.stock = stock;
 	}
 	
-	public ProductoDTO (String nombreProd, Double precio, Double tipoIva) {
+	public ProductoDTO (String nombreProd, Double precio, Double tipoIva, Integer stock) {
 		
 		this.nombreProd = nombreProd;
 		this.precio = precio;
 		this.tipoIva = tipoIva;
+		this.stock = stock;
 	}
 	
 	public ProductoDTO (Integer codProducto) {
