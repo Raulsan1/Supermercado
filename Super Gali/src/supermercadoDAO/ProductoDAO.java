@@ -29,8 +29,6 @@ public class ProductoDAO {
 			
 				producto = new ProductoDTO(codigo,nombre,precio,precioIva,stock);
 				
-			}else {
-				System.out.println("El producto no se encuentra en la base de datos.");
 			}
 			
 			resultado.close();
@@ -71,6 +69,42 @@ public class ProductoDAO {
 		} catch (Exception e) {
 			System.out.println("Error en la consulta: "+e.getLocalizedMessage());
 		}
+	}
+	
+	public boolean comprobarPorducto (ProductoDTO dto) {
+		boolean comp = false;
+		
+		try {
+			
+			Conectar con = new Conectar ();
+			Statement consulta = con.getConnect().createStatement();
+			
+			if (dto!=null){
+				ResultSet resultado = consulta.executeQuery("SELECT * FROM Productos WHERE CodigoProducto = '"+dto.getCodProducto()+"';");
+
+				if (resultado.next()==true) {
+					
+					if (resultado.getInt(1)==dto.getCodProducto()) {
+						
+						comp = true;
+					}else {
+						comp = false;
+					}
+				} 
+				
+				resultado.close();
+			}
+
+			consulta.close();
+			con.cerrarConexion(con.getConnect());
+	
+			
+		} catch (Exception e) {
+			System.out.println("Error en la consultaa: "+e.getLocalizedMessage());
+		}
+		
+		return comp;
+		
 	}
 	
 }

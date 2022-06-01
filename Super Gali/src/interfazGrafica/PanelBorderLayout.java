@@ -58,7 +58,6 @@ public class PanelBorderLayout extends JPanel implements ActionListener{
 		add(centro,BorderLayout.CENTER);
 		add(sur,BorderLayout.SOUTH);
 		
-		this.getSize();
 		// width=960,height=540
 		//960-850 = 110 //540-430 = 110
 		setBounds(47,35,850,430);
@@ -87,12 +86,17 @@ public class PanelBorderLayout extends JPanel implements ActionListener{
 				
 				if (usuario.equals("Administrador")) {
 					
-					MarcoAdministrador ad = new MarcoAdministrador();
+					String [] opciones = {"Administracion","Caja"};
 					
-					ad.setVisible(true);
+					int opcion = JOptionPane.showOptionDialog(null, "¿Que ventana quiere utilizar?", "Seleccionar",JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, opciones,null);
+					System.out.println(opcion);
 					
-					MarcoLogin login = new MarcoLogin();
-					login.setVisible(false);
+					if (opcion == 0) {
+						MarcoAdministrador ad = new MarcoAdministrador();
+					} else {
+						MarcoCaja caja = new MarcoCaja();
+					}
+
 				} else {
 					
 					MarcoCaja caja = new MarcoCaja();

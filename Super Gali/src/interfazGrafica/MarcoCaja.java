@@ -16,10 +16,11 @@ import javax.swing.table.DefaultTableModel;
 
 import supermercadoDAO.ProductoDAO;
 import supermercadoModelo.ProductoDTO;
+import varios.Validador;
 
 public class MarcoCaja extends JFrame{
 
-	private String [] columnas = {"Nombre","PrecioIva","Cantidad"};
+	private String [] columnas = {"Nombre","Precio con IVA","Cantidad"};
 	
 	private JButton eliminar;
 	private JButton comprobar;
@@ -43,8 +44,6 @@ public class MarcoCaja extends JFrame{
 	private LinkedHashSet <String> productosNombre;
 	
 	private int contador;
-	private double preciostot;
-	private double preciosIva;
 
 	private ProductoDTO producto;
 
@@ -150,6 +149,7 @@ public class MarcoCaja extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
+				double preciosIva;
 				contador = 0;
 				
 				Integer codigo = Integer.parseInt(textoCodigo.getText());
@@ -184,49 +184,72 @@ public class MarcoCaja extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				ProductoDAO dao = new ProductoDAO();
+				double precio = 0;
+				double iva = 0;
+				double preciostot;
+				double preciosIva;
 				
-				producto = new ProductoDTO(Integer.parseInt(textoCodigo.getText()));
-				producto = dao.buscarProducto(producto);
-				int stock = producto.getStock();
+				Validador vacio = new Validador();
 				
-				DefaultTableModel model = (DefaultTableModel) datos.getModel();
-				int fila = 0;
-				
-				if (productosNombre.contains(textoNombre.getText())) {
-
-					for (int i=0;i<model.getRowCount();i++) {
-						if (model.getValueAt(i, 0).equals(textoNombre.getText())) {
-							fila = i;
-						}
-					}
-					contador++;
-					stock = stock - contador;
-					if (stock==-1) {
+				if (vacio.validarVacio(textoCodigo.getText())==false) {
+					
+					JOptionPane.showMessageDialog(MarcoCaja.this,"Por favor, escriba un codigo","Advertencia",1);				
+				}else {
+					
+					ProductoDAO dao = new ProductoDAO();
+					producto = new ProductoDTO(Integer.parseInt(textoCodigo.getText()));
+					producto = dao.buscarProducto(producto);
+					
+					DefaultTableModel model = (DefaultTableModel) datos.getModel();
+					int fila = 0;
+					
+					if (dao.comprobarPorducto(producto)==false) {
 						
-						JOptionPane.showMessageDialog(MarcoCaja.this,"No existe mas stock de este producto","Advertencia",0);
-						
+						JOptionPane.showMessageDialog(MarcoCaja.this,"El codigo de producto "+textoCodigo.getText()+" no existe.","Advertencia",0);
 					} else {
-						System.out.println(stock);
-						double precio = Double.parseDouble(textoPrecio.getText());
-						double iva = Double.parseDouble(textoIva.getText());
-						preciosIva = (precio * iva /100)+precio;
-						preciostot = preciosIva * contador;
-						model.setValueAt(contador, fila, 2);
-						model.setValueAt(new DecimalFormat("#.##").format(preciostot), fila, 1);
-						model.setValueAt(textoNombre.getText(), fila, 0);
+						
+						int stock = producto.getStock();
+						
+						if (productosNombre.contains(producto.getNombreProd())) {
+
+							for (int i=0;i<model.getRowCount();i++) {
+								if (model.getValueAt(i, 0).equals(producto.getNombreProd())) {
+									fila = i;
+								}
+							}
+							contador++;
+							stock = stock - contador;
+							if (stock<=-1) {
+								JOptionPane.showMessageDialog(MarcoCaja.this,"No existe mas stock de este producto","Advertencia",0);
+								
+							} else {
+								System.out.println(stock);
+								precio = producto.getPrecio();
+								iva = producto.getTipoIva();
+								preciosIva = (precio * iva /100)+precio;
+								preciostot = preciosIva * contador;
+								model.setValueAt(contador, fila, 2);
+								model.setValueAt(new DecimalFormat("#.##").format(preciostot), fila, 1);
+								model.setValueAt(producto.getNombreProd(), fila, 0);
+								productos.put(producto.getCodProducto(), contador);
+							}
+							
+						} else{
+							precio = producto.getPrecio();
+							iva = producto.getTipoIva();
+							preciosIva = (precio * iva /100)+precio;
+							model.addRow(new Object [] {producto.getNombreProd(),String.format("%.2f", preciosIva),1});
+							contador = 1;
+							
+						}
+						productosNombre.add(producto.getNombreProd());
+						
+						
+						System.out.println(productos);
+						System.out.println(productosNombre);
 					}
-					
-				} else{
-					model.addRow(new Object [] {textoNombre.getText(),String.format("%.2f", preciosIva),1});
-					contador = 1;
-					
 				}
-				productosNombre.add(textoNombre.getText());
-				productos.put(producto.getCodProducto(), contador);
 				
-				System.out.println(productos);
-				System.out.println(productosNombre);
 			}
 		});
 		
