@@ -2,21 +2,24 @@ package interfazGrafica;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.TreeMap;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+import supermercadoDAO.Conectar;
 import supermercadoDAO.ProductoDAO;
 import supermercadoModelo.ProductoDTO;
 import varios.Validador;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
 public class MarcoCaja extends JFrame{
 
@@ -265,7 +268,37 @@ public class MarcoCaja extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+
+				Document documento = new Document();
+				int i = 1;
+				
+				try {
+					PdfWriter.getInstance(documento, new FileOutputStream("/Documentos/Desktop/DAW/PRG/Java/Supermercado/Super Gali/Facturas/Factura numero "+(i++)+".pdf"));
+					documento.open();
+					
+					PdfPTable tabla = new PdfPTable(3);
+					tabla.addCell("Nombre");
+					tabla.addCell("Precio");
+					tabla.addCell("Cantidad");
+					
+					try {
+						
+						tabla.addCell(textoNombre.getText());
+						tabla.addCell(textoPrecio.getText());
+						tabla.addCell(productos.get(1).toString());
+						
+						documento.add(tabla);
+						
+					} catch(DocumentException e3) {
+						
+					}
+					
+					documento.close();
+					JOptionPane.showMessageDialog(MarcoCaja.this,"Factura creada","Confirmacion",2);
+					
+				} catch (DocumentException | FileNotFoundException e2) {
+					
+				}
 				
 			}
 		});
