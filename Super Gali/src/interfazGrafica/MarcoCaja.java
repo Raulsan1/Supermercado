@@ -127,20 +127,19 @@ public class MarcoCaja extends JFrame{
 				int fila = datos.getSelectedRow();
 				int i = 0;
 				
-				for (String elemento: productosNombre) {
-					
-					if (i == fila)
-		            {
-		                productosNombre.remove(elemento);
-		                break;
-		            }
-		            i++;
-				}
-				model.removeRow(fila);
-				System.out.println(productosNombre);
-				
-				
-				   
+				if (datos.getSelectedRow()!=-1) {
+					for (String elemento: productosNombre) {
+						
+						if (i == fila)
+			            {
+			                productosNombre.remove(elemento);
+			                break;
+			            }
+			            i++;
+					}
+					model.removeRow(fila);
+					System.out.println(productosNombre);
+				} 
 			}
 		});
 		
@@ -151,30 +150,39 @@ public class MarcoCaja extends JFrame{
 				
 				double preciosIva;
 				contador = 0;
+			
+				Validador vacio = new Validador();
 				
-				Integer codigo = Integer.parseInt(textoCodigo.getText());
-				
-				ProductoDAO dao = new ProductoDAO();
-				producto = new ProductoDTO(codigo);
-				
-				producto = dao.buscarProducto(producto);
-				
-				if (producto == null) {
-					JOptionPane.showMessageDialog(MarcoCaja.this, "El codigo introducido no pertenece a ningun producto.","Advertencia",0);
-					textoCodigo.setText("");
-					textoNombre.setText("");
-					textoPrecio.setText("");
-					textoIva.setText("");
-					textoPrecioIva.setText("");
+				if (vacio.validarVacio(textoCodigo.getText())==false) {
+					
+					JOptionPane.showMessageDialog(MarcoCaja.this,"Por favor, escriba un codigo","Advertencia",1);	
 				} else {
 					
-					preciosIva = (producto.getPrecio()*producto.getTipoIva()/100)+producto.getPrecio();
+					Integer codigo = Integer.parseInt(textoCodigo.getText());
+					ProductoDAO dao = new ProductoDAO();
+					producto = new ProductoDTO(codigo);
 					
-					textoNombre.setText(producto.getNombreProd());
-					textoPrecio.setText(Double.toString(producto.getPrecio()));
-					textoIva.setText(Double.toString(producto.getTipoIva()));
-					textoPrecioIva.setText(String.format("%.2f", preciosIva));
+					producto = dao.buscarProducto(producto);
+					
+					if (producto == null) {
+						JOptionPane.showMessageDialog(MarcoCaja.this, "El codigo introducido no pertenece a ningun producto.","Advertencia",0);
+						textoCodigo.setText("");
+						textoNombre.setText("");
+						textoPrecio.setText("");
+						textoIva.setText("");
+						textoPrecioIva.setText("");
+					} else {
+						
+						preciosIva = (producto.getPrecio()*producto.getTipoIva()/100)+producto.getPrecio();
+						
+						textoNombre.setText(producto.getNombreProd());
+						textoPrecio.setText(Double.toString(producto.getPrecio()));
+						textoIva.setText(Double.toString(producto.getTipoIva()));
+						textoPrecioIva.setText(String.format("%.2f", preciosIva));
+					}
 				}
+				
+				
 			}
 			
 		});

@@ -22,7 +22,6 @@ public class MarcoAdministrador extends JFrame{
 		
 		setLocation(anchoPantalla/4, alturaPantalla/4);
 		setVisible(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 	}
 }
