@@ -50,12 +50,16 @@ public class MarcoCaja extends JFrame{
 
 	private ProductoDTO producto;
 
+	private double precioTotal,preciosJunto;
+	private int i;
+
 	public MarcoCaja () {
 		
 		Toolkit pantalla = Toolkit.getDefaultToolkit();
 		Image icono = pantalla.getImage("src/imagenes/supergali.jpg");
 		productos = new TreeMap<Integer,Integer>();
 		productosNombre = new LinkedHashSet<String>();
+		precioTotal = 0.00;
 		setLayout(new BorderLayout());
 		
 		JLabel codigo = new JLabel("Codigo");
@@ -68,6 +72,8 @@ public class MarcoCaja extends JFrame{
 		textoIva = new JTextField (20);
 		JLabel precioIva = new JLabel("Precio con IVA");
 		textoPrecioIva = new JTextField (15); 
+		JLabel total = new JLabel ("Precio total: ");
+		JLabel numTotal = new JLabel ("0.00");
 		
 		oeste = new JPanel();
 		oeste.setLayout(new FlowLayout(FlowLayout.RIGHT,50,50));
@@ -82,6 +88,8 @@ public class MarcoCaja extends JFrame{
 		oeste.add(textoIva);
 		oeste.add(precioIva);
 		oeste.add(textoPrecioIva);
+		oeste.add(total);
+		oeste.add(numTotal);
 		add(oeste,BorderLayout.WEST);
 		
 		este = new JPanel();
@@ -118,6 +126,7 @@ public class MarcoCaja extends JFrame{
 				model.setRowCount(0);
 				productosNombre.clear();
 				productos.clear();
+				precioTotal = 0.00;
 			}
 			
 		});
@@ -139,9 +148,14 @@ public class MarcoCaja extends JFrame{
 			                break;
 			            }
 			            i++;
+			            
+			            precioTotal = precioTotal - preciosJunto;
+			            numTotal.setText(Double.toString(precioTotal));
+			            
 					}
 					model.removeRow(fila);
 					System.out.println(productosNombre);
+					System.out.println(productos);
 				} 
 			}
 		});
@@ -182,6 +196,9 @@ public class MarcoCaja extends JFrame{
 						textoPrecio.setText(Double.toString(producto.getPrecio()));
 						textoIva.setText(Double.toString(producto.getTipoIva()));
 						textoPrecioIva.setText(String.format("%.2f", preciosIva));
+						
+						precioTotal = precioTotal - preciosJunto;
+			            numTotal.setText(Double.toString(precioTotal));
 					}
 				}
 				
@@ -197,7 +214,6 @@ public class MarcoCaja extends JFrame{
 				
 				double precio = 0;
 				double iva = 0;
-				double preciostot;
 				double preciosIva;
 				
 				Validador vacio = new Validador();
@@ -238,9 +254,9 @@ public class MarcoCaja extends JFrame{
 								precio = producto.getPrecio();
 								iva = producto.getTipoIva();
 								preciosIva = (precio * iva /100)+precio;
-								preciostot = preciosIva * contador;
+								preciosJunto = preciosIva * contador;
 								model.setValueAt(contador, fila, 2);
-								model.setValueAt(new DecimalFormat("#.##").format(preciostot), fila, 1);
+								model.setValueAt(new DecimalFormat("#.##").format(preciosJunto), fila, 1);
 								model.setValueAt(producto.getNombreProd(), fila, 0);
 								productos.put(producto.getCodProducto(), contador);
 							}
@@ -251,8 +267,13 @@ public class MarcoCaja extends JFrame{
 							preciosIva = (precio * iva /100)+precio;
 							model.addRow(new Object [] {producto.getNombreProd(),String.format("%.2f", preciosIva),1});
 							contador = 1;
-							
+						
 						}
+						preciosIva = (producto.getPrecio() * iva/100)+producto.getPrecio();
+						
+						precioTotal = preciosIva + precioTotal;
+						numTotal.setText(Double.toString(precioTotal));
+								
 						productosNombre.add(producto.getNombreProd());
 						
 						
@@ -270,17 +291,16 @@ public class MarcoCaja extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 
 				Document documento = new Document();
-				int i = 1;
-				
+				i++;
 				try {
-					PdfWriter.getInstance(documento, new FileOutputStream("/Documentos/Desktop/DAW/PRG/Java/Supermercado/Super Gali/Facturas/Factura numero "+(i++)+".pdf"));
+					PdfWriter.getInstance(documento, new FileOutputStream("Facturas/Factura numero "+i+".pdf"));
 					documento.open();
 					
 					PdfPTable tabla = new PdfPTable(3);
 					tabla.addCell("Nombre");
 					tabla.addCell("Precio");
 					tabla.addCell("Cantidad");
-					
+
 					try {
 						
 						tabla.addCell(textoNombre.getText());
@@ -290,14 +310,14 @@ public class MarcoCaja extends JFrame{
 						documento.add(tabla);
 						
 					} catch(DocumentException e3) {
-						
+						System.out.println(e3.getLocalizedMessage());
 					}
 					
 					documento.close();
 					JOptionPane.showMessageDialog(MarcoCaja.this,"Factura creada","Confirmacion",2);
 					
 				} catch (DocumentException | FileNotFoundException e2) {
-					
+				 System.out.println(e2.getLocalizedMessage());	
 				}
 				
 			}
@@ -315,4 +335,5 @@ public class MarcoCaja extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 	}
+	
 }

@@ -3,6 +3,7 @@ package interfazGrafica;
 import javax.swing.*;
 
 import supermercadoModelo.TrabajadorDTO;
+import varios.Validador;
 import supermercadoDAO.TrabajadorDAO;
 
 import java.awt.*;
@@ -176,8 +177,9 @@ public class PanelBorderLayout extends JPanel implements ActionListener{
 			String usuario = textoUsu.getText().trim();
 			char[] cadena = textoCont.getPassword();
 			String contrasena = String.valueOf(cadena);
+			Validador comprobacion = new Validador();
 			
-			String hash = encriptarContrasena(contrasena);
+			String hash = comprobacion.encriptarContrasena(contrasena);
 			
 			TrabajadorDTO empleado = new TrabajadorDTO(null, usuario, hash,null, null,null);
 			TrabajadorDAO t = new TrabajadorDAO();
@@ -207,36 +209,6 @@ public class PanelBorderLayout extends JPanel implements ActionListener{
 			}
 		}
 		
-	}
-	
-	public static String encriptarContrasena (String texto) {
-		
-		String hash;
-		
-		try {
-			  
-            // Static getInstance method is called with hashing MD5
-            MessageDigest md = MessageDigest.getInstance("MD5");
-  
-            // digest() method is called to calculate message digest
-            //  of an input digest() return array of byte
-            byte[] messageDigest = md.digest(texto.getBytes());
-  
-            // Convert byte array into signum representation
-            BigInteger no = new BigInteger(1, messageDigest);
-  
-            // Convert message digest into hex value
-            hash = no.toString(16);
-            while (hash.length() < 32) {
-                hash = "0" + hash;
-            }
-        } 
-  
-        // For specifying wrong message digest algorithms
-        catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-		return hash;
 	}
 	
 }

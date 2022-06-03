@@ -29,6 +29,10 @@ public class ProductoDTO {
 		this.codProducto = codProducto;
 	}
 
+	public ProductoDTO(String nombreProd) {
+		this.nombreProd = nombreProd;
+	}
+
 	public Integer getCodProducto() {
 		return codProducto;
 	}

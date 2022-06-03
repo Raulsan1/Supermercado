@@ -17,7 +17,7 @@ public class ProductoDAO {
 			Conectar con = new Conectar ();
 			Statement consulta = con.getConnect().createStatement();
 				
-			ResultSet resultado = consulta.executeQuery("SELECT * FROM Productos WHERE CodigoProducto = '"+dto.getCodProducto()+"';");
+			ResultSet resultado = consulta.executeQuery("SELECT * FROM Productos WHERE CodigoProducto = '"+dto.getCodProducto()+"' or Nombre = '"+dto.getNombreProd()+"';");		
 			
 			if (resultado.next()==true) {
 				
@@ -32,9 +32,8 @@ public class ProductoDAO {
 			}
 			
 			resultado.close();
-		
-		consulta.close();
-		con.cerrarConexion(con.getConnect());
+			consulta.close();
+			con.cerrarConexion(con.getConnect());
 	
 			
 		} catch (Exception e) {
