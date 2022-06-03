@@ -4,15 +4,20 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashSet;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-import supermercadoDAO.Conectar;
+import supermercadoDAO.DetalleFacturaDAO;
+import supermercadoDAO.FacturaDAO;
 import supermercadoDAO.ProductoDAO;
+import supermercadoModelo.DetalleFacturaDTO;
+import supermercadoModelo.FacturaDTO;
 import supermercadoModelo.ProductoDTO;
 import varios.Validador;
 
@@ -46,20 +51,21 @@ public class MarcoCaja extends JFrame{
 	private TreeMap <Integer,Integer> productos;
 	private LinkedHashSet <String> productosNombre;
 	
-	private int contador;
+	private int contador,i;
 
 	private ProductoDTO producto;
 
-	private double precioTotal,preciosJunto;
-	private int i;
+	double precioTotal,preciosJunto;
 
 	public MarcoCaja () {
 		
 		Toolkit pantalla = Toolkit.getDefaultToolkit();
 		Image icono = pantalla.getImage("src/imagenes/supergali.jpg");
+		
 		productos = new TreeMap<Integer,Integer>();
 		productosNombre = new LinkedHashSet<String>();
 		precioTotal = 0.00;
+		
 		setLayout(new BorderLayout());
 		
 		JLabel codigo = new JLabel("Codigo");
@@ -92,9 +98,11 @@ public class MarcoCaja extends JFrame{
 		oeste.add(numTotal);
 		add(oeste,BorderLayout.WEST);
 		
-		este = new JPanel();
+		
 		model = new DefaultTableModel (columnas,0);
 		datos = new JTable (model);
+		
+		este = new JPanel();
 		este.add(new JScrollPane(datos));
 		este.setPreferredSize(new Dimension (500,200));
 		add(este, BorderLayout.EAST);
@@ -120,13 +128,12 @@ public class MarcoCaja extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
-				DefaultTableModel model = (DefaultTableModel) datos.getModel();
 
 				model.setRowCount(0);
 				productosNombre.clear();
 				productos.clear();
 				precioTotal = 0.00;
+				numTotal.setText(String.format("%.2f",precioTotal));
 			}
 			
 		});
@@ -138,25 +145,36 @@ public class MarcoCaja extends JFrame{
 				
 				int fila = datos.getSelectedRow();
 				int i = 0;
+				String nombre = "";
 				
 				if (datos.getSelectedRow()!=-1) {
+					
 					for (String elemento: productosNombre) {
 						
-						if (i == fila)
-			            {
+						if (i == fila){
+							
 			                productosNombre.remove(elemento);
+			                nombre = elemento;
 			                break;
 			            }
 			            i++;
 			            
-			            precioTotal = precioTotal - preciosJunto;
-			            numTotal.setText(Double.toString(precioTotal));
-			            
 					}
+					if (model.getValueAt(fila, 1) instanceof Double) {
+						
+				        precioTotal = precioTotal - (Double) model.getValueAt(fila, 1);
+				        numTotal.setText(String.format("%.2f",precioTotal));
+				    }
+					
+					ProductoDTO dto = new ProductoDTO(nombre);
+					ProductoDAO dao = new ProductoDAO();
+					ProductoDTO producto = dao.buscarProducto(dto);
+					
+					productos.remove(producto.getCodProducto());
 					model.removeRow(fila);
 					System.out.println(productosNombre);
 					System.out.println(productos);
-				} 
+				}
 			}
 		});
 		
@@ -197,14 +215,9 @@ public class MarcoCaja extends JFrame{
 						textoIva.setText(Double.toString(producto.getTipoIva()));
 						textoPrecioIva.setText(String.format("%.2f", preciosIva));
 						
-						precioTotal = precioTotal - preciosJunto;
-			            numTotal.setText(Double.toString(precioTotal));
 					}
-				}
-				
-				
-			}
-			
+				}				
+			}		
 		});
 		
 		agregar.addActionListener(new ActionListener(){
@@ -212,76 +225,103 @@ public class MarcoCaja extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				double precio = 0;
-				double iva = 0;
+				precioTotal = 0.00;
 				double preciosIva;
 				
 				Validador vacio = new Validador();
 				
+				
 				if (vacio.validarVacio(textoCodigo.getText())==false) {
 					
-					JOptionPane.showMessageDialog(MarcoCaja.this,"Por favor, escriba un codigo","Advertencia",1);				
+					JOptionPane.showMessageDialog(MarcoCaja.this,"Por favor, escriba un codigo","Advertencia",1);	
+					
 				}else {
 					
 					ProductoDAO dao = new ProductoDAO();
 					producto = new ProductoDTO(Integer.parseInt(textoCodigo.getText()));
 					producto = dao.buscarProducto(producto);
 					
-					DefaultTableModel model = (DefaultTableModel) datos.getModel();
 					int fila = 0;
 					
 					if (dao.comprobarPorducto(producto)==false) {
 						
 						JOptionPane.showMessageDialog(MarcoCaja.this,"El codigo de producto "+textoCodigo.getText()+" no existe.","Advertencia",0);
+						
 					} else {
 						
 						int stock = producto.getStock();
+						int stockReduc = 0;
 						
-						if (productosNombre.contains(producto.getNombreProd())) {
-
-							for (int i=0;i<model.getRowCount();i++) {
-								if (model.getValueAt(i, 0).equals(producto.getNombreProd())) {
-									fila = i;
-								}
-							}
-							contador++;
-							stock = stock - contador;
-							if (stock<=-1) {
-								JOptionPane.showMessageDialog(MarcoCaja.this,"No existe mas stock de este producto","Advertencia",0);
-								
-							} else {
-								System.out.println(stock);
-								precio = producto.getPrecio();
-								iva = producto.getTipoIva();
-								preciosIva = (precio * iva /100)+precio;
-								preciosJunto = preciosIva * contador;
-								model.setValueAt(contador, fila, 2);
-								model.setValueAt(new DecimalFormat("#.##").format(preciosJunto), fila, 1);
-								model.setValueAt(producto.getNombreProd(), fila, 0);
-								productos.put(producto.getCodProducto(), contador);
-							}
+						if (stock==0) {
 							
-						} else{
-							precio = producto.getPrecio();
-							iva = producto.getTipoIva();
-							preciosIva = (precio * iva /100)+precio;
-							model.addRow(new Object [] {producto.getNombreProd(),String.format("%.2f", preciosIva),1});
-							contador = 1;
-						
-						}
-						preciosIva = (producto.getPrecio() * iva/100)+producto.getPrecio();
-						
-						precioTotal = preciosIva + precioTotal;
-						numTotal.setText(Double.toString(precioTotal));
+							JOptionPane.showMessageDialog(MarcoCaja.this,"No existe mas stock de este producto","Advertencia",0);
+							
+						} else {
+							
+							if (productosNombre.contains(producto.getNombreProd())) {
+
+								for (int i=0;i<model.getRowCount();i++) {
+									if (model.getValueAt(i, 0).equals(producto.getNombreProd())) {
+										fila = i;
+									}
+									
+								}
 								
-						productosNombre.add(producto.getNombreProd());
-						
-						
-						System.out.println(productos);
-						System.out.println(productosNombre);
+								numTotal.setText(String.format("%.2f",precioTotal));
+								contador++;
+								stockReduc = stock - contador;
+								
+								if (stockReduc<=-1) {
+									
+									JOptionPane.showMessageDialog(MarcoCaja.this,"No existe mas stock de este producto","Advertencia",0);
+									
+								} else {
+									System.out.println(stockReduc);
+
+									preciosIva = (producto.getPrecio() * producto.getTipoIva() /100)+producto.getPrecio();
+									preciosJunto = preciosIva * contador;
+									preciosJunto = (double)Math.round(preciosJunto * 100) / 100;
+									
+									model.setValueAt(contador, fila, 2);
+									model.setValueAt(preciosJunto, fila, 1);
+									model.setValueAt(producto.getNombreProd(), fila, 0);
+									productos.put(producto.getCodProducto(), contador);
+									
+								}
+								
+							} else{
+								
+								if (stockReduc<=-1) {
+									
+									JOptionPane.showMessageDialog(MarcoCaja.this,"No existe mas stock de este producto","Advertencia",0);
+									
+								} else {
+								
+									preciosIva = (producto.getPrecio() * producto.getTipoIva() /100)+producto.getPrecio();
+									model.addRow(new Object [] {producto.getNombreProd(),String.format("%.2f", preciosIva),1});
+									contador = 1;
+									precioTotal = preciosIva + precioTotal;
+									numTotal.setText(String.format("%.2f",precioTotal));
+								}
+
+							}
+
+							
+							for (int i=0;i<model.getRowCount();i++) {
+								
+								if (model.getValueAt(i, 1) instanceof Double) {
+							        precioTotal = (Double) model.getValueAt(i, 1) + precioTotal;
+							        numTotal.setText(String.format("%.2f",precioTotal));
+							    }
+								
+							}
+							productosNombre.add(producto.getNombreProd());
+
+							System.out.println(productos);
+							System.out.println(productosNombre);
+						}
 					}
-				}
-				
+				}	
 			}
 		});
 		
@@ -290,36 +330,73 @@ public class MarcoCaja extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				Document documento = new Document();
-				i++;
-				try {
-					PdfWriter.getInstance(documento, new FileOutputStream("Facturas/Factura numero "+i+".pdf"));
-					documento.open();
+				if (productos.isEmpty()) {
 					
-					PdfPTable tabla = new PdfPTable(3);
-					tabla.addCell("Nombre");
-					tabla.addCell("Precio");
-					tabla.addCell("Cantidad");
-
+					JOptionPane.showMessageDialog(MarcoCaja.this,"No ha introducido ningun producto","Advertencia",0);
+					
+				} else {
+					
 					try {
 						
-						tabla.addCell(textoNombre.getText());
-						tabla.addCell(textoPrecio.getText());
-						tabla.addCell(productos.get(1).toString());
+						Document documento = new Document();
+						i++;
 						
-						documento.add(tabla);
+						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+				        		
+						FacturaDAO daof = new FacturaDAO();
+						FacturaDTO dtof = new FacturaDTO("T"+i,01, dtf.format(LocalDateTime.now()), (double)Math.round(precioTotal * 100) / 100);
+						daof.nuevaFactura(dtof);
 						
-					} catch(DocumentException e3) {
-						System.out.println(e3.getLocalizedMessage());
+						for (Entry<Integer, Integer> codigo: productos.entrySet()) {
+							
+							ProductoDTO dto = new ProductoDTO(codigo.getKey());
+							ProductoDAO dao = new ProductoDAO();
+							dto = dao.buscarProducto(dto);
+							
+							dto.setStock(dto.getStock() - codigo.getValue());
+							dao.actualizarStock(dto);
+							
+							double precioIva = (dto.getPrecio()*dto.getTipoIva()/100)+dto.getPrecio();
+							
+							DetalleFacturaDTO dtod = new DetalleFacturaDTO("T"+i, codigo.getKey(), codigo.getValue(), (double)Math.round(precioIva * 100) / 100);
+							DetalleFacturaDAO daod = new DetalleFacturaDAO();
+							daod.nuevaDetalleFactura(dtod);
+						}
+						
+						model.setRowCount(0);
+						productosNombre.clear();
+						productos.clear();
+						precioTotal = 0.00;
+						numTotal.setText(String.format("%.2f",precioTotal));
+
+						PdfWriter.getInstance(documento, new FileOutputStream("Facturas/Factura numero "+i+".pdf"));
+						documento.open();
+						
+						PdfPTable tabla = new PdfPTable(3);
+						tabla.addCell("Nombre");
+						tabla.addCell("Precio");
+						tabla.addCell("Cantidad");
+
+						/*
+						try {
+							
+							tabla.addCell(textoNombre.getText());
+							tabla.addCell(textoPrecio.getText());
+							tabla.addCell(productos.get(1).toString());
+							
+							documento.add(tabla);
+							
+						} catch(DocumentException e3) {
+							System.out.println(e3.getLocalizedMessage());
+						}
+						*/
+						//documento.close();
+						JOptionPane.showMessageDialog(MarcoCaja.this,"Factura creada","Confirmacion",2);
+						
+					} catch (DocumentException | FileNotFoundException e2) {
+					 System.out.println(e2.getLocalizedMessage());	
 					}
-					
-					documento.close();
-					JOptionPane.showMessageDialog(MarcoCaja.this,"Factura creada","Confirmacion",2);
-					
-				} catch (DocumentException | FileNotFoundException e2) {
-				 System.out.println(e2.getLocalizedMessage());	
-				}
-				
+				}	
 			}
 		});
 		
@@ -335,5 +412,4 @@ public class MarcoCaja extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 	}
-	
 }

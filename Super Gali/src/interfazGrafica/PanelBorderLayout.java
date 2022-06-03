@@ -20,16 +20,14 @@ public class PanelBorderLayout extends JPanel implements ActionListener{
 	private JPasswordField textoCont;
 	
 	public PanelBorderLayout () {
-		
-		
-		
+
 		// 1440p/2 = width=1280,height=720
 		// 1440p/2,5 = width=1024,height=576
 		// 1080p/2 = width=960,height=540
 		// 1080p/2,5 = width=768,height=432
 		// 900p/2 = width=800,height=450
 		// 900p/2,5 = width=640,height=360
-		//960-850 = 110 //540-430 = 110
+		// 960-850 = 110 //540-430 = 110
 		
 		Toolkit pantalla = Toolkit.getDefaultToolkit();
 		Dimension tamanoPantalla = pantalla.getScreenSize();
@@ -181,12 +179,13 @@ public class PanelBorderLayout extends JPanel implements ActionListener{
 			
 			String hash = comprobacion.encriptarContrasena(contrasena);
 			
-			TrabajadorDTO empleado = new TrabajadorDTO(null, usuario, hash,null, null,null);
+			TrabajadorDTO empleado = new TrabajadorDTO(null, usuario, hash,null,null);
+			
 			TrabajadorDAO t = new TrabajadorDAO();
 			
 			if (t.comprobarContrasenaUsuario(empleado)==true) {
 				
-				if (usuario.equals("Administrador")) {
+				if (empleado.getUsuario().equals("Administrador")) {
 					
 					String [] opciones = {"Administracion","Caja"};
 					

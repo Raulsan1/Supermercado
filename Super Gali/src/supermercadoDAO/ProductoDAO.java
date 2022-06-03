@@ -50,8 +50,6 @@ public class ProductoDAO {
 			Statement consulta = con.getConnect().createStatement();
 			ResultSet resultado = consulta.executeQuery("SELECT * FROM Productos WHERE CodigoProducto = '"+dto.getCodProducto()+"';");
 			
-			System.out.println(dto.getStock());
-			
 			if (resultado.next()==true) {
 				System.out.println(dto.getStock());
 				

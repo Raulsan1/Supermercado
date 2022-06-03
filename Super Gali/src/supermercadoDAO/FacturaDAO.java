@@ -10,11 +10,12 @@ public class FacturaDAO {
 		
 		try {
 			Conectar con = new Conectar();
-			PreparedStatement consulta = con.getConnect().prepareStatement("INSERT INTO Facturas VALUES (?,?,?);");
+			PreparedStatement consulta = con.getConnect().prepareStatement("INSERT INTO Facturas (CodigoFactura,CodigoCaja,FechaHora,PrecioTotal) VALUES (?,?,?,?);");
 			
-			consulta.setInt(1, dto.getCaja());
-			consulta.setInt(2, dto.getCodFactura());
-			consulta.setTimestamp(3, dto.getFechaHora());
+			consulta.setString(1, dto.getCodFactura());
+			consulta.setInt(2, dto.getCaja());
+			consulta.setString(3, dto.getFechaHora());
+			consulta.setDouble(4, dto.getPrecioTotal());
 			consulta.execute();
 			
 			con.cerrarConexion(con.getConnect());

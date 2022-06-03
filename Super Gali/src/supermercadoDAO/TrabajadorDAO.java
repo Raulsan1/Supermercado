@@ -26,11 +26,10 @@ public class TrabajadorDAO {
 					Integer codigoEmpleado = resultado.getInt(1);
 					String usuario = resultado.getString(2);
 					String contrasena = resultado.getString(3);
-					Integer caja = resultado.getInt(4);
-					String nombre = resultado.getString(5);
-					String dni = resultado.getString(6);
+					String nombre = resultado.getString(4);
+					String dni = resultado.getString(5);
 					
-					trabajador = new TrabajadorDTO(codigoEmpleado,usuario,contrasena,caja,nombre,dni);
+					trabajador = new TrabajadorDTO(codigoEmpleado,usuario,contrasena,nombre,dni);
 					
 				}else {
 					System.out.println("El personaje no se encuentra en la base de datos.");

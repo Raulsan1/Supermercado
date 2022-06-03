@@ -1,27 +1,33 @@
 package supermercadoModelo;
 
-import java.sql.Timestamp;
-
 public class FacturaDTO {
 
-	private Integer codFactura;
+	private String codFactura;
 	private Integer caja;
-	private Timestamp fechaHora;
+	private String fechaHora;
+	private Double precioTotal;
 	
 	
-	public FacturaDTO (Integer codFactura, Integer caja, Timestamp fechaHora) {
+	public FacturaDTO (String codFactura, Integer caja, String fechaHora, Double precioTotal) {
 		
 		this.codFactura = codFactura;
 		this.caja = caja;
 		this.fechaHora = fechaHora;
+		this.precioTotal = precioTotal;
 
 	}
+	public FacturaDTO (Integer caja,String fechaHora, Double precioTotal) {
+		
+		this.caja = caja;
+		this.fechaHora = fechaHora;
+		this.precioTotal = precioTotal;
+	}
 
-	public Integer getCodFactura() {
+	public String getCodFactura() {
 		return codFactura;
 	}
 
-	public void setCodFactura(Integer codFactura) {
+	public void setCodFactura(String codFactura) {
 		this.codFactura = codFactura;
 	}
 
@@ -33,12 +39,18 @@ public class FacturaDTO {
 		this.caja = caja;
 	}
 
-	public Timestamp getFechaHora() {
+	public String getFechaHora() {
 		return fechaHora;
 	}
 
-	public void setFechaHora(Timestamp fechaHora) {
+	public void setFechaHora(String fechaHora) {
 		this.fechaHora = fechaHora;
+	}
+	public Double getPrecioTotal() {
+		return precioTotal;
+	}
+	public void setPrecioTotal(Double precioTotal) {
+		this.precioTotal = precioTotal;
 	}
 	
 }
