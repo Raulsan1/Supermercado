@@ -5,9 +5,20 @@ import java.sql.Statement;
 
 import supermercadoModelo.ProductoDTO;
 
+/**
+* Clase que representa los diferentes metodos para obtener la informacion de los Productos de la base de datos
+* @author Raúl Sanz Andrés
+* @version 1.0
+*/
+
 public class ProductoDAO {
 
-
+	/**
+	 * Metodo que busca un producto en la base de datos
+	 * @param dto dto que se quiere encontrar
+	 * @return producto regresa el producto que se ha encontrado
+	 */
+	
 	public ProductoDTO buscarProducto (ProductoDTO dto) {
 		
 		ProductoDTO producto = null;
@@ -43,6 +54,11 @@ public class ProductoDAO {
 		return producto;
 	}
 	
+	/**
+	 * Metodo para actualizar el stock en la base de datos
+	 * @param dto dto del producto que se quiere actualizar
+	 */
+	
 	public void actualizarStock (ProductoDTO dto) {
 		
 		try {
@@ -66,6 +82,12 @@ public class ProductoDAO {
 			System.out.println("Error en la consulta: "+e.getLocalizedMessage());
 		}
 	}
+	
+	/**
+	 * Metodo para comprobar si un producto existe en la base de datos
+	 * @param dto dto del producto que se quiere comprobar
+	 * @return comp regresa el booleano con el resultado
+	 */
 	
 	public boolean comprobarPorducto (ProductoDTO dto) {
 		boolean comp = false;

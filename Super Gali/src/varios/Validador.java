@@ -4,9 +4,20 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+* Clase que representa a varios tipos de metodos y validadores 
+* @author Raúl Sanz Andrés
+* @version 1.0
+*/
+
 public class Validador {
 	
-	public boolean validarVacio (String texto) {
+	/**
+	 * Metodo que valida si el texto pasado como parametro esta vacio
+	 * @param texto texto de tipo string que se quiere validar
+	 * @return comp regresa un booleano con el resultado
+	 */
+	public boolean isVacio (String texto) {
 		
 		boolean comp = false;
 		
@@ -19,30 +30,49 @@ public class Validador {
 		return comp;
 	}
 	
+	/**
+	 * Metodo que valida si el texto pasado como parametro es un numero
+	 * @param texto texto de tipo string que se quiere validar
+	 * @return comp regresa un booleano con el resultado
+	 */
+	public boolean isInteger (String texto) {
+		
+		boolean comp = false;
+		
+		try {
+			Integer.parseInt(texto);
+			comp = true;
+		} catch (NumberFormatException e) {
+			comp = false;
+		}
+		
+		return comp;
+	}
+	
+	/**
+	 * Metodo para encriptar la contraseña pasada como parametro
+	 * @param texto contraseña que se quiere encriptar
+	 * @return hash el hash que se ha generado
+	 */
 	public String encriptarContrasena (String texto) {
 		
 		String hash;
 		
 		try {
-			  
-            // Static getInstance method is called with hashing MD5
+			 
             MessageDigest md = MessageDigest.getInstance("MD5");
   
-            // digest() method is called to calculate message digest
-            //  of an input digest() return array of byte
             byte[] messageDigest = md.digest(texto.getBytes());
   
-            // Convert byte array into signum representation
             BigInteger no = new BigInteger(1, messageDigest);
   
-            // Convert message digest into hex value
             hash = no.toString(16);
             while (hash.length() < 32) {
                 hash = "0" + hash;
             }
+            
         } 
   
-        // For specifying wrong message digest algorithms
         catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }

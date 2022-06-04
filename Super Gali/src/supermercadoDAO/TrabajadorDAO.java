@@ -5,7 +5,19 @@ import java.sql.Statement;
 
 import supermercadoModelo.TrabajadorDTO;
 
+/**
+* Clase que representa los diferentes metodos para obtener la informacion de los Trabajadores de la base de datos
+* @author Raúl Sanz Andrés
+* @version 1.0
+*/
+
 public class TrabajadorDAO {
+	
+	/**
+	 * Metodo que busca un trabajador en la base de datos
+	 * @param dto dto del trabajador que se quiere buscar
+	 * @return trabajador regresa el trabajador encontrado
+	 */
 
 	public TrabajadorDTO buscarTrabajador (TrabajadorDTO dto) {
 		
@@ -16,7 +28,7 @@ public class TrabajadorDAO {
 			Conectar con = new Conectar ();
 			Statement consulta = con.getConnect().createStatement();
 			
-			if (!dto.getCodEmpleado().equals("")) {
+			if (dto.getCodEmpleado() != null) {
 				
 				ResultSet resultado = consulta.executeQuery("SELECT * FROM Trabajadores WHERE Usuario = '"+dto.getCodEmpleado()+"';");
 				
@@ -48,6 +60,12 @@ public class TrabajadorDAO {
 		return trabajador;
 	}
 	
+	/**
+	 * Metodo que comprueba la contraseña y el usuario del trabajador
+	 * @param dto dto del trabajador al que se le quiere comprobar la contraseña y el usuario
+	 * @return comp regresa el booleano con el resultado
+	 */
+	
 	public boolean comprobarContrasenaUsuario (TrabajadorDTO dto) {
 		
 		boolean comp = false;
@@ -63,11 +81,13 @@ public class TrabajadorDAO {
 
 				if (resultado.next()==true) {
 					
-					if (resultado.getString(3).equalsIgnoreCase(dto.getUsuario())&&resultado.getString(4).equalsIgnoreCase(dto.getContraseña())) {
-						
-						comp = true;
-					}else {
-						comp = false;
+					if (resultado.getString(2).equalsIgnoreCase(dto.getUsuario())) {
+						if(resultado.getString(3).equalsIgnoreCase(dto.getContraseña())) {
+							comp = true;
+							
+						}else{
+							comp = false;
+						}
 					}
 				} 
 				

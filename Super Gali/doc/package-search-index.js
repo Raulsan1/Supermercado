@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"interfazGrafica"},{"l":"supermercadoDAO"},{"l":"supermercadoModelo"},{"l":"varios"}];updateSearchResults();

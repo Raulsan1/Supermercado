@@ -3,7 +3,17 @@ package interfazGrafica;
 import java.awt.*;
 import javax.swing.*;
 
+/**
+* Clase que representa a el Marco de administrador. Sin implementar
+* @author Raúl Sanz Andrés
+* @version 1.0
+*/
+
 public class MarcoAdministrador extends JFrame{
+	
+	/**
+	 * Constructor de el MarcoAdministrador
+	 */
 
 	public MarcoAdministrador () {
 		

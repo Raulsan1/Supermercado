@@ -12,12 +12,22 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+* Clase que representa a el border layout que se ha añadido al MarcoLogin
+* @author Raúl Sanz Andrés
+* @version 1.0
+*/
+
 public class PanelBorderLayout extends JPanel implements ActionListener{
 	
 	private JButton borrar;
 	private JButton aceptar;
 	private JTextField textoUsu;
 	private JPasswordField textoCont;
+	
+	/**
+	 * Constructor del PanelBorderLayout
+	 */
 	
 	public PanelBorderLayout () {
 
@@ -200,8 +210,7 @@ public class PanelBorderLayout extends JPanel implements ActionListener{
 				} else {
 					
 					MarcoCaja caja = new MarcoCaja();
-				}
-				
+				}	
 				
 			} else {
 				JOptionPane.showMessageDialog(PanelBorderLayout.this, "Contraseña o usuario incorrecto","Advertencia",0);

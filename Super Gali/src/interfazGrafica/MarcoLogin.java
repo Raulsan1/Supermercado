@@ -3,8 +3,18 @@ package interfazGrafica;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+* Clase que representa a el Marco de login
+* @author Raúl Sanz Andrés
+* @version 1.0
+*/
+
 public class MarcoLogin extends JFrame{
 
+	/**
+	 * Constructor del MarcoLogin
+	 */
+	
 	public MarcoLogin () {
 		
 		Toolkit pantalla = Toolkit.getDefaultToolkit();
