@@ -497,16 +497,16 @@ public class MarcoCaja extends JFrame{
 				
 				if (dto.getTipoIva()==4.00) {
 					tipoIva1 = dto.getTipoIva();
-					precioSinIva1 = dto.getPrecio()+precioSinIva1;
+					precioSinIva1 = (dto.getPrecio()*producto.getCantidad())+precioSinIva1;
 				}
 				
 				if (dto.getTipoIva()==10.00) {
 					tipoIva2 = dto.getTipoIva();
-					precioSinIva2 = dto.getPrecio()+precioSinIva2;
+					precioSinIva2 = (dto.getPrecio()*producto.getCantidad())+precioSinIva2;
 				}
 				if (dto.getTipoIva()==21.00) {
 					tipoIva3 = dto.getTipoIva();
-					precioSinIva3 = dto.getPrecio()+precioSinIva3;
+					precioSinIva3 = (dto.getPrecio()*producto.getCantidad())+precioSinIva3;
 				}
 
 				documento.add(p);
