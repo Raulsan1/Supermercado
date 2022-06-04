@@ -2,32 +2,30 @@ package supermercadoModelo;
 
 public class DetalleFacturaDTO {
 
-	private String codigoFatura;
+	private String codigoFactura;
 	private Integer codigoProducto;
 	private Integer cantidad;
 	private Double precio;
 	
 	public DetalleFacturaDTO (String string, Integer codigoProducto, Integer cantidad, Double precio) {
 		
-		this.codigoFatura = string;
+		this.codigoFactura = string;
 		this.codigoProducto = codigoProducto;
 		this.cantidad = cantidad;
 		this.precio = precio;
 	}
 
-	public DetalleFacturaDTO(Integer codigoProducto, Integer cantidad, Double precio) {
+	public DetalleFacturaDTO(String codigoFactura) {
 
-		this.codigoProducto = codigoProducto;
-		this.cantidad = cantidad;
-		this.precio = precio;
+		this.codigoFactura = codigoFactura;
 	}
 
-	public String getCodigoFatura() {
-		return codigoFatura;
+	public String getCodigoFactura() {
+		return codigoFactura;
 	}
 
-	public void setCodigoFatura(String codigoFatura) {
-		this.codigoFatura = codigoFatura;
+	public void setCodigoFactura(String codigoFactura) {
+		this.codigoFactura = codigoFactura;
 	}
 
 	public Integer getCantidad() {

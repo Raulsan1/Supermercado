@@ -51,7 +51,6 @@ public class ProductoDAO {
 			ResultSet resultado = consulta.executeQuery("SELECT * FROM Productos WHERE CodigoProducto = '"+dto.getCodProducto()+"';");
 			
 			if (resultado.next()==true) {
-				System.out.println(dto.getStock());
 				
 				Statement consulta2 = con.getConnect().createStatement();
 				consulta2.executeUpdate("UPDATE Productos SET Stock = "+dto.getStock()+" WHERE CodigoProducto = '"+dto.getCodProducto()+"';");

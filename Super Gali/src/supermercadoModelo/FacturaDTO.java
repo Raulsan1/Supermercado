@@ -6,23 +6,33 @@ public class FacturaDTO {
 	private Integer caja;
 	private String fechaHora;
 	private Double precioTotal;
+	private Double dinero;
 	
 	
-	public FacturaDTO (String codFactura, Integer caja, String fechaHora, Double precioTotal) {
+	public FacturaDTO (String codFactura, Integer caja, String fechaHora, Double precioTotal, Double dinero) {
 		
 		this.codFactura = codFactura;
 		this.caja = caja;
 		this.fechaHora = fechaHora;
 		this.precioTotal = precioTotal;
+		this.dinero = dinero;
 
 	}
-	public FacturaDTO (Integer caja,String fechaHora, Double precioTotal) {
+
+	public Double getDinero() {
+		return dinero;
+	}
+
+	public void setDinero(Double dinero) {
+		this.dinero = dinero;
+	}
+
+	public FacturaDTO(String codFactura) {
+
+		this.codFactura = codFactura;
 		
-		this.caja = caja;
-		this.fechaHora = fechaHora;
-		this.precioTotal = precioTotal;
 	}
-
+	
 	public String getCodFactura() {
 		return codFactura;
 	}

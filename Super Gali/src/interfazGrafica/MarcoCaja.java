@@ -4,11 +4,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -21,8 +24,14 @@ import supermercadoModelo.FacturaDTO;
 import supermercadoModelo.ProductoDTO;
 import varios.Validador;
 
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font.FontFamily;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
@@ -132,8 +141,6 @@ public class MarcoCaja extends JFrame{
 				model.setRowCount(0);
 				productosNombre.clear();
 				productos.clear();
-				precioTotal = 0.00;
-				numTotal.setText(String.format("%.2f",precioTotal));
 			}
 			
 		});
@@ -160,11 +167,6 @@ public class MarcoCaja extends JFrame{
 			            i++;
 			            
 					}
-					if (model.getValueAt(fila, 1) instanceof Double) {
-						
-				        precioTotal = precioTotal - (Double) model.getValueAt(fila, 1);
-				        numTotal.setText(String.format("%.2f",precioTotal));
-				    }
 					
 					ProductoDTO dto = new ProductoDTO(nombre);
 					ProductoDAO dao = new ProductoDAO();
@@ -172,8 +174,6 @@ public class MarcoCaja extends JFrame{
 					
 					productos.remove(producto.getCodProducto());
 					model.removeRow(fila);
-					System.out.println(productosNombre);
-					System.out.println(productos);
 				}
 			}
 		});
@@ -225,8 +225,7 @@ public class MarcoCaja extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				precioTotal = 0.00;
-				double preciosIva;
+				double preciosIva;			
 				
 				Validador vacio = new Validador();
 				
@@ -276,7 +275,6 @@ public class MarcoCaja extends JFrame{
 									JOptionPane.showMessageDialog(MarcoCaja.this,"No existe mas stock de este producto","Advertencia",0);
 									
 								} else {
-									System.out.println(stockReduc);
 
 									preciosIva = (producto.getPrecio() * producto.getTipoIva() /100)+producto.getPrecio();
 									preciosJunto = preciosIva * contador;
@@ -300,25 +298,11 @@ public class MarcoCaja extends JFrame{
 									preciosIva = (producto.getPrecio() * producto.getTipoIva() /100)+producto.getPrecio();
 									model.addRow(new Object [] {producto.getNombreProd(),String.format("%.2f", preciosIva),1});
 									contador = 1;
-									precioTotal = preciosIva + precioTotal;
-									numTotal.setText(String.format("%.2f",precioTotal));
+									productos.put(producto.getCodProducto(), contador);
 								}
 
 							}
-
-							
-							for (int i=0;i<model.getRowCount();i++) {
-								
-								if (model.getValueAt(i, 1) instanceof Double) {
-							        precioTotal = (Double) model.getValueAt(i, 1) + precioTotal;
-							        numTotal.setText(String.format("%.2f",precioTotal));
-							    }
-								
-							}
 							productosNombre.add(producto.getNombreProd());
-
-							System.out.println(productos);
-							System.out.println(productosNombre);
 						}
 					}
 				}	
@@ -330,70 +314,71 @@ public class MarcoCaja extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				if (productos.isEmpty()) {
+				if (productosNombre.isEmpty()) {
 					
 					JOptionPane.showMessageDialog(MarcoCaja.this,"No ha introducido ningun producto","Advertencia",0);
 					
 				} else {
 					
+					precioTotal = 0.00;
+
+					
+					for (Entry<Integer, Integer> codigo: productos.entrySet()) {
+						
+						ProductoDTO dto1 = new ProductoDTO(codigo.getKey());
+						ProductoDAO dao1 = new ProductoDAO();
+						dto1 = dao1.buscarProducto(dto1);
+						
+						double preciosIva = (dto1.getPrecio() * dto1.getTipoIva() /100)+dto1.getPrecio();
+						precioTotal = preciosIva * codigo.getValue() + precioTotal;
+						
+					}
+					numTotal.setText(String.format("%.2f", precioTotal));
+					
 					try {
 						
-						Document documento = new Document();
-						i++;
-						
-						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-				        		
-						FacturaDAO daof = new FacturaDAO();
-						FacturaDTO dtof = new FacturaDTO("T"+i,01, dtf.format(LocalDateTime.now()), (double)Math.round(precioTotal * 100) / 100);
-						daof.nuevaFactura(dtof);
-						
-						for (Entry<Integer, Integer> codigo: productos.entrySet()) {
+						String sdinero = JOptionPane.showInputDialog("Escribe el dinero a pagar");
+						double dinero = Double.parseDouble(sdinero);
+						if (dinero < precioTotal) {
+							JOptionPane.showMessageDialog(MarcoCaja.this,"Valor escrito por debajo del precio a pagar","Error",1);
+						}else {
 							
-							ProductoDTO dto = new ProductoDTO(codigo.getKey());
-							ProductoDAO dao = new ProductoDAO();
-							dto = dao.buscarProducto(dto);
+							i++;
 							
-							dto.setStock(dto.getStock() - codigo.getValue());
-							dao.actualizarStock(dto);
+							DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+					        		
+							FacturaDAO daof = new FacturaDAO();
+							FacturaDTO dtof = new FacturaDTO("T"+i,01, dtf.format(LocalDateTime.now()), (double)Math.round(precioTotal * 100) / 100,dinero);
+							daof.nuevaFactura(dtof);
 							
-							double precioIva = (dto.getPrecio()*dto.getTipoIva()/100)+dto.getPrecio();
+							for (Entry<Integer, Integer> codigo: productos.entrySet()) {
+								
+								ProductoDTO dto = new ProductoDTO(codigo.getKey());
+								ProductoDAO dao = new ProductoDAO();
+								dto = dao.buscarProducto(dto);
+								
+								dto.setStock(dto.getStock() - codigo.getValue());
+								dao.actualizarStock(dto);
+								
+								double precioIva = (dto.getPrecio()*dto.getTipoIva()/100)+dto.getPrecio();
+								double precioPorProducto = precioIva * codigo.getValue();
+								
+								DetalleFacturaDTO dtod = new DetalleFacturaDTO("T"+i, codigo.getKey(), codigo.getValue(), (double)Math.round(precioPorProducto * 100) / 100);
+								DetalleFacturaDAO daod = new DetalleFacturaDAO();
+								daod.nuevaDetalleFactura(dtod);
+							}
 							
-							DetalleFacturaDTO dtod = new DetalleFacturaDTO("T"+i, codigo.getKey(), codigo.getValue(), (double)Math.round(precioIva * 100) / 100);
-							DetalleFacturaDAO daod = new DetalleFacturaDAO();
-							daod.nuevaDetalleFactura(dtod);
+							crearPdf(dtf,dtof);
+							
+							model.setRowCount(0);
+							productosNombre.clear();
+							productos.clear();
+							precioTotal = 0.00;
+							numTotal.setText(String.format("%.2f",precioTotal));
+							
 						}
 						
-						model.setRowCount(0);
-						productosNombre.clear();
-						productos.clear();
-						precioTotal = 0.00;
-						numTotal.setText(String.format("%.2f",precioTotal));
-
-						PdfWriter.getInstance(documento, new FileOutputStream("Facturas/Factura numero "+i+".pdf"));
-						documento.open();
-						
-						PdfPTable tabla = new PdfPTable(3);
-						tabla.addCell("Nombre");
-						tabla.addCell("Precio");
-						tabla.addCell("Cantidad");
-
-						/*
-						try {
-							
-							tabla.addCell(textoNombre.getText());
-							tabla.addCell(textoPrecio.getText());
-							tabla.addCell(productos.get(1).toString());
-							
-							documento.add(tabla);
-							
-						} catch(DocumentException e3) {
-							System.out.println(e3.getLocalizedMessage());
-						}
-						*/
-						//documento.close();
-						JOptionPane.showMessageDialog(MarcoCaja.this,"Factura creada","Confirmacion",2);
-						
-					} catch (DocumentException | FileNotFoundException e2) {
+					} catch (Exception e2) {
 					 System.out.println(e2.getLocalizedMessage());	
 					}
 				}	
@@ -411,5 +396,148 @@ public class MarcoCaja extends JFrame{
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
+	}
+	
+	public void crearPdf (DateTimeFormatter dtf,FacturaDTO factura) {
+		
+		
+		try {
+			double precioSinIva1 = 0;
+			double precioSinIva2 = 0;
+			double precioSinIva3 = 0;
+			
+			double tipoIva1 = 0;
+			double tipoIva2 = 0;
+			double tipoIva3 = 0;
+			
+			String espacio = "      ";
+			String espacio2 = "     ";
+			String codigo = factura.getCodFactura();
+			
+			FacturaDAO daof = new FacturaDAO();
+			FacturaDTO dtof = new FacturaDTO(codigo);
+			dtof = daof.buscarFactura(dtof);
+			
+			DecimalFormat f = new DecimalFormat("00.00");
+			
+			DetalleFacturaDAO daod = new DetalleFacturaDAO();
+			DetalleFacturaDTO dtod = new DetalleFacturaDTO(codigo);
+			ArrayList <DetalleFacturaDTO> detalles = daod.buscarDetalleFactura(dtod);
+
+			
+			Document documento = new Document();
+
+			PdfWriter.getInstance(documento, new FileOutputStream("Facturas/Factura numero "+i+".pdf"));
+			
+			documento.open();
+			
+			Paragraph titulo = new Paragraph("SUPER GALI",FontFactory.getFont(FontFactory.TIMES_ROMAN,15, Font.BOLD, BaseColor.BLACK));
+			titulo.setAlignment(Element.ALIGN_CENTER);
+			documento.add(titulo);
+			
+			Paragraph fechaHora = new Paragraph(dtf.format(LocalDateTime.now()),FontFactory.getFont(FontFactory.TIMES_ROMAN,15, Font.BOLD, BaseColor.BLACK));
+			fechaHora.setAlignment(Element.ALIGN_CENTER);
+			documento.add(fechaHora);
+			
+			Paragraph facturaCaja = new Paragraph("N. FACTURA: "+dtof.getCodFactura()+"                    N. CAJA: "+dtof.getCaja(),FontFactory.getFont(FontFactory.TIMES_ROMAN,15, Font.BOLD, BaseColor.BLACK));
+			facturaCaja.setAlignment(Element.ALIGN_CENTER);
+			documento.add(facturaCaja);
+			
+			documento.add(Chunk.NEWLINE);
+			
+			for (DetalleFacturaDTO producto : detalles) {
+				
+				ProductoDAO dao = new ProductoDAO();
+				ProductoDTO dto = new ProductoDTO(producto.getCodigoProducto());
+				dto = dao.buscarProducto(dto);
+				
+				Paragraph p = new Paragraph(null, FontFactory.getFont(FontFactory.TIMES_ROMAN,15, Font.BOLD, BaseColor.BLACK));
+				p.add(dto.getNombreProd());
+				p.add(espacio2+espacio2+espacio2+espacio2+espacio2+"   ");
+				p.add(producto.getCantidad().toString());
+				p.add("X");
+				p.add(espacio2+espacio2+espacio2+espacio2+espacio2+"   ");
+				p.add(f.format(producto.getPrecio()));
+				p.add(espacio2+espacio2+espacio2+espacio2+espacio2+"   ");
+				p.add(f.format(dto.getTipoIva()));
+				p.add("%");
+				p.setAlignment(Element.ALIGN_RIGHT);
+				
+				if (dto.getTipoIva()==4.00) {
+					tipoIva1 = dto.getTipoIva();
+					precioSinIva1 = dto.getPrecio()+precioSinIva1;
+				}
+				
+				if (dto.getTipoIva()==10.00) {
+					tipoIva2 = dto.getTipoIva();
+					precioSinIva2 = dto.getPrecio()+precioSinIva2;
+				}
+				if (dto.getTipoIva()==21.00) {
+					tipoIva3 = dto.getTipoIva();
+					precioSinIva3 = dto.getPrecio()+precioSinIva3;
+				}
+
+				documento.add(p);
+			}
+			
+			
+			Paragraph __ = new Paragraph("**************************************************************",FontFactory.getFont(FontFactory.TIMES_ROMAN,15, Font.BOLD, BaseColor.BLACK));
+			__.setAlignment(Element.ALIGN_CENTER);
+			documento.add(__);
+			
+			documento.add(Chunk.NEWLINE);
+			
+			Paragraph pago = new Paragraph("TOTAL A PAGAR"+"                                                                           "+dtof.getPrecioTotal(),FontFactory.getFont(FontFactory.TIMES_ROMAN,15, Font.BOLD, BaseColor.BLACK));
+			pago.setAlignment(Element.ALIGN_LEFT);
+			documento.add(pago);
+			
+			Paragraph efectivo = new Paragraph("EFECTIVO"+"                                                                                      "+dtof.getDinero(),FontFactory.getFont(FontFactory.TIMES_ROMAN,15, Font.BOLD, BaseColor.BLACK));
+			pago.setAlignment(Element.ALIGN_LEFT);
+			documento.add(efectivo);
+			
+			
+			double cambioo = (double)Math.round((dtof.getDinero()-dtof.getPrecioTotal()) * 100) / 100;
+			
+			Paragraph cambio = new Paragraph("CAMBIO"+"                                                                                          "+cambioo,FontFactory.getFont(FontFactory.TIMES_ROMAN,15, Font.BOLD, BaseColor.BLACK));
+			pago.setAlignment(Element.ALIGN_LEFT);
+			documento.add(cambio);
+			
+			documento.add(Chunk.NEWLINE);
+			
+			double cuota1 = (precioSinIva1 * tipoIva1)/100;
+			double cuota2 = (precioSinIva2 * tipoIva2)/100;
+			double cuota3 = (precioSinIva3 * tipoIva3)/100;
+			
+			//IVA 			BASE 			CUOTA			TOTAL
+			Paragraph row = new Paragraph("   IVA                 BASE                 CUOTA              TOTAL",FontFactory.getFont(FontFactory.TIMES_ROMAN,15, Font.BOLD, BaseColor.BLACK));
+			row.setAlignment(Element.ALIGN_CENTER);
+			documento.add(row);
+			
+			Paragraph ___ = new Paragraph("**************************************************************",FontFactory.getFont(FontFactory.TIMES_ROMAN,15, Font.BOLD, BaseColor.BLACK));
+			___.setAlignment(Element.ALIGN_CENTER);
+			documento.add(___);
+			
+			
+			Paragraph iva1 = new Paragraph(f.format(tipoIva1)+espacio+espacio+espacio+f.format(precioSinIva1)+espacio+espacio+espacio+f.format(cuota1)+espacio+espacio+espacio+"  "+f.format(precioSinIva1+cuota1),FontFactory.getFont(FontFactory.TIMES_ROMAN,15, Font.BOLD, BaseColor.BLACK));
+			iva1.setAlignment(Element.ALIGN_CENTER);
+			documento.add(iva1);
+			Paragraph iva2 = new Paragraph(f.format(tipoIva2)+espacio+espacio+espacio+f.format(precioSinIva2)+espacio+espacio+espacio+f.format(cuota2)+espacio+espacio+espacio+"  "+f.format(precioSinIva2+cuota2),FontFactory.getFont(FontFactory.TIMES_ROMAN,15, Font.BOLD, BaseColor.BLACK));
+			iva2.setAlignment(Element.ALIGN_CENTER);
+			documento.add(iva2);
+			Paragraph iva3 = new Paragraph(f.format(tipoIva3)+espacio+espacio+espacio+f.format(precioSinIva3)+espacio+espacio+espacio+f.format(cuota3)+espacio+espacio+espacio+"  "+f.format(precioSinIva3+cuota3),FontFactory.getFont(FontFactory.TIMES_ROMAN,15, Font.BOLD, BaseColor.BLACK));
+			iva3.setAlignment(Element.ALIGN_CENTER);
+			documento.add(iva3);
+			
+			documento.close();
+
+		
+			JOptionPane.showMessageDialog(MarcoCaja.this,"Factura creada","Confirmacion",2);
+			
+		}catch (FileNotFoundException e) {
+			System.out.println(e.getLocalizedMessage());
+		}catch (DocumentException e) {
+			System.out.println(e.getLocalizedMessage());
+		}
+		
 	}
 }
