@@ -12,6 +12,8 @@ import supermercadoModelo.ProductoDTO;
 */
 
 public class ProductoDAO {
+	
+	private String suceso;
 
 	/**
 	 * Metodo que busca un producto en la base de datos
@@ -22,6 +24,8 @@ public class ProductoDAO {
 	public ProductoDTO buscarProducto (ProductoDTO dto) {
 		
 		ProductoDTO producto = null;
+		
+		setSuceso("Producto encontrado");
 		
 		try {
 			
@@ -40,6 +44,8 @@ public class ProductoDAO {
 			
 				producto = new ProductoDTO(codigo,nombre,precio,precioIva,stock);
 				
+			} else {
+				setSuceso("El producto no existe");
 			}
 			
 			resultado.close();
@@ -49,6 +55,7 @@ public class ProductoDAO {
 			
 		} catch (Exception e) {
 			System.out.println("Error en la consulta: "+e.getLocalizedMessage());
+			setSuceso("Error");
 		}
 		
 		return producto;
@@ -61,6 +68,8 @@ public class ProductoDAO {
 	
 	public void actualizarStock (ProductoDTO dto) {
 		
+		setSuceso("Stock actualizado correctamente");
+		
 		try {
 			Conectar con = new Conectar();
 			Statement consulta = con.getConnect().createStatement();
@@ -72,6 +81,8 @@ public class ProductoDAO {
 				consulta2.executeUpdate("UPDATE Productos SET Stock = "+dto.getStock()+" WHERE CodigoProducto = '"+dto.getCodProducto()+"';");
 				
 				consulta2.close();
+			} else {
+				setSuceso("El producto no existe");
 			}
 			
 			consulta.close();
@@ -80,6 +91,7 @@ public class ProductoDAO {
 			
 		} catch (Exception e) {
 			System.out.println("Error en la consulta: "+e.getLocalizedMessage());
+			setSuceso("Error");
 		}
 	}
 	
@@ -91,6 +103,8 @@ public class ProductoDAO {
 	
 	public boolean comprobarPorducto (ProductoDTO dto) {
 		boolean comp = false;
+		
+		setSuceso ("El producto existe");
 		
 		try {
 			
@@ -107,10 +121,15 @@ public class ProductoDAO {
 						comp = true;
 					}else {
 						comp = false;
+						setSuceso("El producto no existe");
 					}
-				} 
+				}else {
+					setSuceso("El producto no existe");
+				}
 				
 				resultado.close();
+			} else {
+				setSuceso("El producto no existe");
 			}
 
 			consulta.close();
@@ -119,10 +138,19 @@ public class ProductoDAO {
 			
 		} catch (Exception e) {
 			System.out.println("Error en la consultaa: "+e.getLocalizedMessage());
+			setSuceso("Error");
 		}
 		
 		return comp;
 		
+	}
+
+	public String getSuceso() {
+		return suceso;
+	}
+
+	public void setSuceso(String suceso) {
+		this.suceso = suceso;
 	}
 	
 }

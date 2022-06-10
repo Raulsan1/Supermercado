@@ -308,7 +308,7 @@ public class MarcoCaja extends JFrame{
 										productos.put(producto.getCodProducto(), contador);
 										
 									}
-									
+									 
 								} else{
 									
 									if (stockReduc<=-1) {

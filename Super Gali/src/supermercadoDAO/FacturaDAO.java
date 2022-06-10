@@ -12,12 +12,16 @@ import supermercadoModelo.FacturaDTO;
 
 public class FacturaDAO {
 	
+	private String suceso;
+	
 	/**
 	 * Metodo que inserta en la base de datos una nueva factura
 	 * @param dto
 	 */
 	
 	public void nuevaFactura (FacturaDTO dto) {
+		
+		setSuceso("Factura creada correctamente");
 		
 		try {
 			Conectar con = new Conectar();
@@ -35,6 +39,7 @@ public class FacturaDAO {
 			
 		} catch (Exception e) {
 			System.out.println("Error al registrar la factura: "+e.getLocalizedMessage());
+			setSuceso("Error");
 		}
 	}
 	
@@ -47,6 +52,7 @@ public class FacturaDAO {
 	public FacturaDTO buscarFactura (FacturaDTO dto) {
 		
 		FacturaDTO factura = null;
+		setSuceso("Factura encontrada");
 		
 		try {
 			
@@ -65,12 +71,23 @@ public class FacturaDAO {
 				
 				factura = new FacturaDTO (codFactura,caja,fechaHora,precioTotal,dinero);
 				
+			} else {
+				setSuceso("La factura no existe");
 			}
 		} catch (Exception e) {
 			System.out.println("Error al buscar la factura: "+e.getLocalizedMessage());
+			setSuceso("Error");
 		}
 		
 		return factura;
+	}
+
+	public String getSuceso() {
+		return suceso;
+	}
+
+	public void setSuceso(String suceso) {
+		this.suceso = suceso;
 	}
 
 }

@@ -17,6 +17,7 @@ import supermercadoModelo.FacturaDTO;
 public class DetalleFacturaDAO {
 	
 	private ArrayList <DetalleFacturaDTO> detallesFactura;
+	private String suceso;
 	
 	/**
 	 * Metodo que inserta una nueva factura en la base de datos
@@ -24,6 +25,8 @@ public class DetalleFacturaDAO {
 	 */
 
 	public void nuevaDetalleFactura (DetalleFacturaDTO dto) {
+		
+		setSuceso("detalleFactura insertada correctamente");
 		
 		try {
 			Conectar con = new Conectar();
@@ -38,8 +41,10 @@ public class DetalleFacturaDAO {
 			con.cerrarConexion(con.getConnect());
 			consulta.close();
 			
+			
 		} catch (Exception e) {
 			System.out.println("Error al registrar la detalle factura: "+e.getLocalizedMessage());
+			setSuceso("Error");
 		}
 	}
 	
@@ -55,6 +60,7 @@ public class DetalleFacturaDAO {
 		detallesFactura = new ArrayList <DetalleFacturaDTO>();
 		
 		try {
+			setSuceso("detalleFactura encontrada");
 			
 			Conectar con = new Conectar();
 			Statement consulta = con.getConnect().createStatement();
@@ -75,11 +81,22 @@ public class DetalleFacturaDAO {
 					
 				} while(resultado.next());
 				
+			} else {
+				setSuceso("La detalleFactura no existe");
 			}
 		} catch (Exception e) {
 			System.out.println("Error al buscar la factura: "+e.getLocalizedMessage());
+			setSuceso("Error");
 		}
 		
 		return detallesFactura;
+	}
+
+	public String getSuceso() {
+		return suceso;
+	}
+
+	public void setSuceso(String suceso) {
+		this.suceso = suceso;
 	}
 }

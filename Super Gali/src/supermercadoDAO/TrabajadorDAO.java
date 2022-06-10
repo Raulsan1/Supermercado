@@ -13,6 +13,8 @@ import supermercadoModelo.TrabajadorDTO;
 
 public class TrabajadorDAO {
 	
+	private String suceso;
+	
 	/**
 	 * Metodo que busca un trabajador en la base de datos
 	 * @param dto dto del trabajador que se quiere buscar
@@ -23,6 +25,8 @@ public class TrabajadorDAO {
 		
 		TrabajadorDTO trabajador = null;
 		
+		setSuceso("Trabajador encontrado");
+		
 		try {
 			
 			Conectar con = new Conectar ();
@@ -30,7 +34,7 @@ public class TrabajadorDAO {
 			
 			if (dto.getCodEmpleado() != null) {
 				
-				ResultSet resultado = consulta.executeQuery("SELECT * FROM Trabajadores WHERE Usuario = '"+dto.getCodEmpleado()+"';");
+				ResultSet resultado = consulta.executeQuery("SELECT * FROM Trabajadores WHERE CodigoEmpleado = '"+dto.getCodEmpleado()+"';");
 				
 				if (resultado.next()==true) {
 					System.out.println("El personaje se encuentra en la base de datos.");
@@ -45,9 +49,12 @@ public class TrabajadorDAO {
 					
 				}else {
 					System.out.println("El personaje no se encuentra en la base de datos.");
+					setSuceso("Trabajador no encontrado");
 				}
 				
 				resultado.close();
+			}else {
+				setSuceso("Trabajador no encontrado");
 			}
 			consulta.close();
 			con.cerrarConexion(con.getConnect());
@@ -55,6 +62,7 @@ public class TrabajadorDAO {
 			
 		} catch (Exception e) {
 			System.out.println("Error en la consulta: "+e.getLocalizedMessage());
+			setSuceso("Error");
 		}
 		
 		return trabajador;
@@ -102,5 +110,13 @@ public class TrabajadorDAO {
 		}
 		
 		return comp;
+	}
+
+	public String getSuceso() {
+		return suceso;
+	}
+
+	public void setSuceso(String suceso) {
+		this.suceso = suceso;
 	}
 }
